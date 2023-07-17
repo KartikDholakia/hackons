@@ -1,5 +1,6 @@
-from django.urls import path, include
+from django.urls import path
+from hackathons.views import hackathons
 
 urlpatterns = [
-    path(''),
+    path('hackathons/', hackathons),
 ]
