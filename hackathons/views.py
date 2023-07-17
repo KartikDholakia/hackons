@@ -88,4 +88,16 @@ def login(request):
 			"token": str(token)
 		}, status.HTTP_200_OK)
 	
-		
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def user_hackathon(request):
+	user_id = request.user.id
+	hack_list = Hackathon.objects.filter(users__id=user_id)
+	serializer = HackathonSerializer(hack_list, many=True)
+
+	return Response({
+		"Message": "User's registered Hackathon List",
+		"Hackathons": serializer.data
+	}, status.HTTP_200_OK)
