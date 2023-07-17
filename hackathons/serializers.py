@@ -4,6 +4,8 @@ from django.contrib.auth.models import User
 
 
 class HackathonSerializer(serializers.ModelSerializer):
+    depth = 1
+
     class Meta:
         model = Hackathon
         fields = '__all__'

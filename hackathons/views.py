@@ -1,8 +1,11 @@
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework.authtoken.models import Token
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+
 
 from .models import Hackathon
 from .serializers import HackathonSerializer, SignupSerializer, LoginSerializer
@@ -32,6 +35,20 @@ def hackathons(request):
 			"Message": "Hackathon Created",
 			"Data": serializer.data
 		}, status.HTTP_201_CREATED)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def register_in_hackathon(request, id):
+	hackathon_object = Hackathon.objects.get(id=id)
+	hackathon_object.users.add(request.user)
+	serializer = HackathonSerializer(hackathon_object)
+
+	return Response({
+		"Message": "User Registered in hackathon",
+		"Hackathon": serializer.data
+	}, status.HTTP_201_CREATED)
 
 
 @api_view(['POST'])
