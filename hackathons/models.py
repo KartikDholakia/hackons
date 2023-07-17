@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 SUBMISSION_TYPES = [('image', 'image'), ('file', 'file'), ('link', 'link')]
 
@@ -11,3 +12,5 @@ class Hackathon(models.Model):
     submission_type = models.CharField(choices=SUBMISSION_TYPES, max_length=10)
     start_date = models.DateTimeField(null=True)
     end_date = models.DateTimeField(null=True)
+
+    users = models.ManyToManyField(User)
