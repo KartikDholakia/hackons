@@ -8,7 +8,7 @@ from rest_framework.authentication import TokenAuthentication
 
 
 from .models import Hackathon
-from .serializers import HackathonSerializer, SignupSerializer, LoginSerializer
+from .serializers import HackathonSerializer, SignupSerializer, LoginSerializer, SubmissionSerializer
 
 # Create your views here.
 @api_view(['GET', 'POST'])
@@ -79,7 +79,7 @@ def login(request):
 				"error": serializer.errors
 			}, status.HTTP_400_BAD_REQUEST)
 		
-		print(serializer.data)
+		# print(serializer.data)
 		user = authenticate(username=serializer.data['username'], password=serializer.data['password'])
 		token = Token.objects.get_or_create(user=user)
 		# print(token.key)
@@ -101,3 +101,29 @@ def user_hackathon(request):
 		"Message": "User's registered Hackathon List",
 		"Hackathons": serializer.data
 	}, status.HTTP_200_OK)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes([TokenAuthentication])
+def create_submission(request, id):
+	data = request.data
+	data['hackathon'] = id
+	data['user'] = request.user.id
+
+	print(data)
+
+	serializer = SubmissionSerializer(data=data)
+
+	if not serializer.is_valid():
+		return Response({
+			"message": "Error in submitting",
+			"error": serializer.errors
+		}, status.HTTP_400_BAD_REQUEST)
+	
+	serializer.save()
+	return Response({
+		"Message": "Submission Made",
+		"Submission": serializer.data
+	}, status.HTTP_201_CREATED)
+

@@ -14,3 +14,18 @@ class Hackathon(models.Model):
     end_date = models.DateTimeField(null=True)
 
     users = models.ManyToManyField(User)
+
+
+class Submission(models.Model):
+    '''
+    Django Model that represents a submission. It has foreign key to 
+    Hackathon and User models.
+    '''
+    hackathon = models.ForeignKey(Hackathon, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    name = models.CharField(max_length=20)
+    summary = models.TextField()
+    submission = models.TextField()
+
+
